@@ -4,7 +4,7 @@ categories = Blueprint('categories', __name__, url_prefix='/categories')
 
 @categories.get('/')
 def index():
-    return jsonify({ 'msg': 'Hello world from categories'})
+  return jsonify({ 'msg': 'Hello world from categories'})
 
 @categories.get('/<id>')
 def get(id):
@@ -16,8 +16,8 @@ def create():
 
 @categories.put('/<id>')
 def update(id):
-   return jsonify({ 'msg': 'To implement' })
+  return jsonify({ 'msg': 'To implement' })
 
 @categories.delete('/<id>')
 def delete(id):
-   return jsonify({ 'msg': 'To implement' })
+  return jsonify({ 'msg': 'To implement' })

@@ -4,7 +4,7 @@ users = Blueprint('users', __name__, url_prefix='/users')
 
 @users.get('/')
 def index():
-    return jsonify({ 'msg': 'Hello world from users'})
+  return jsonify({ 'msg': 'Hello world from users'})
 
 @users.get('/<id>')
 def get(id):
@@ -16,8 +16,8 @@ def create():
 
 @users.put('/<id>')
 def update(id):
-   return jsonify({ 'msg': 'To implement' })
+  return jsonify({ 'msg': 'To implement' })
 
 @users.delete('/<id>')
 def delete(id):
-   return jsonify({ 'msg': 'To implement' })
+  return jsonify({ 'msg': 'To implement' })
