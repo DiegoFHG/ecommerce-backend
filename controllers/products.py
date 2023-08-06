@@ -1,9 +1,11 @@
 from flask import Blueprint, jsonify
+from schemas import product
 
 products = Blueprint('products', __name__, url_prefix='/products')
 
 @products.get('/')
 def index():
+  product.ProductSchema().validate
   return jsonify({ 'msg': 'Hello world from products'})
 
 @products.get('/<id>')
