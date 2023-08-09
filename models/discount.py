@@ -7,7 +7,7 @@ class Discount(db.Model):
   id = db.Column(db.BigInteger, primary_key=True)
   name = db.Column(db.String, unique=True, nullable=False)
   percentage = db.Column(db.DECIMAL, nullable=False)
-  products = db.relationship('Prodcuts', back_populates='discounts')
+  products = db.relationship('Product', backref='discount')
   created_at = db.Column(db.DateTime, default=datetime.now)
   updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now) 
   deleted_at = db.Column(db.DateTime)

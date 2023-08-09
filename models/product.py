@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from config import db
 from datetime import datetime
 from models.orders import OrderProducts
@@ -5,8 +6,10 @@ from models.orders import OrderProducts
 class ProductCategory(db.Model):
   __tablename__ = 'product_category'
 
-  product = db.Column(db.BigInteger, db.ForeignKey('products.id'), primary_key=True)
-  category = db.Column(db.BigInteger, db.ForeignKey('categories.id'), primary_key=True)
+  product_id = db.Column(db.BigInteger, db.ForeignKey('products.id'), primary_key=True)
+  category_id = db.Column(db.BigInteger, db.ForeignKey('categories.id'), primary_key=True)
+  product = db.relationship('Product', back_populates='categories')
+  category = db.relationship('Category', back_populates='products')
   created_at = db.Column(db.DateTime, default=datetime.now)
   updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now) 
   deleted_at = db.Column(db.DateTime)
@@ -28,13 +31,14 @@ class Product(db.Model):
   name = db.Column(db.String, nullable=False)
   desc = db.Column(db.Text)
   price = db.Column(db.DECIMAL, nullable=False)
-  currency = db.Column(db.BigInteger, db.ForeignKey('currencies.id'), nullable=False)
-  tax = db.Column(db.BigInteger, db.ForeignKey('taxes.id'))
-  discount = db.Column(db.BigInteger, db.ForeignKey('discounts.id'))
+  currency_id = db.Column(db.BigInteger, db.ForeignKey('currencies.id'), nullable=False)
+  tax_id = db.Column(db.BigInteger, db.ForeignKey('taxes.id'))
+  discount_id = db.Column(db.BigInteger, db.ForeignKey('discounts.id'))
   active = db.Column(db.Boolean, default=False)
-  orders = db.relationship('Order', secondary=OrderProducts, back_populates='products')
-  inventory = db.relationship('ProductInventory', back_populates='products', uselist=False)
-  categories = db.relationship('Categories', secondary=ProductCategory, back_populates='products')
+  img = db.Column(db.String)
+  orders = db.relationship('OrderProducts', back_populates='product')
+  categories = db.relationship('ProductCategory', back_populates='product')
+  inventory = db.relationship('ProductInventory', backref='products', uselist=False, cascade="all, delete")
   created_at = db.Column(db.DateTime, default=datetime.now)
   updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now) 
   deleted_at = db.Column(db.DateTime)

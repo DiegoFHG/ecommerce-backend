@@ -4,9 +4,11 @@ from datetime import datetime
 class OrderProducts(db.Model):
   __tablename__ = 'order_products'
 
-  order = db.Column(db.BigInteger, db.ForeignKey('orders.id'), primary_key=True)
-  product = db.Column(db.BigInteger, db.ForeignKey('products.id'), primary_key=True)
+  order_id = db.Column(db.BigInteger, db.ForeignKey('orders.id'), primary_key=True)
+  product_id = db.Column(db.BigInteger, db.ForeignKey('products.id'), primary_key=True)
   quantity = db.Column(db.Integer)
+  order = db.relationship('Order', back_populates='products')
+  product = db.relationship('Product', back_populates='orders')
   created_at = db.Column(db.DateTime, default=datetime.now)
   updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now) 
   deleted_at = db.Column(db.DateTime)
@@ -15,6 +17,7 @@ class OrderDetails(db.Model):
   __tablename__ = 'order_details'
 
   id = db.Column(db.BigInteger, primary_key=True)
+  order = db.Column(db.BigInteger, db.ForeignKey('orders.id'))
   line = db.Column(db.String, nullable=False)
   city = db.Column(db.String, nullable=False)
   country = db.Column(db.String, nullable=False)
@@ -22,10 +25,9 @@ class OrderDetails(db.Model):
   recipient_name = db.Column(db.String, nullable=False)
   recipient_last_name = db.Column(db.String, nullable=False)
   total = db.Column(db.DECIMAL, nullable=False)
-  currency = db.Column(db.BigInteger, nullable=False)
-  shipping_type = db.Column(db.BigInteger, db.ForeignKey('shipping_types.id'), nullable=False)
-  payment_type = db.Column(db.BigInteger, db.ForeignKey('payment_types.id'), nullable=False)
-  orders = db.relationship('Order', back_populates='order_details', uselist=False)
+  currency_id = db.Column(db.BigInteger, db.ForeignKey('currencies.id'), nullable=False)
+  shipping_type_id = db.Column(db.BigInteger, db.ForeignKey('shipping_types.id'), nullable=False)
+  payment_type_id = db.Column(db.BigInteger, db.ForeignKey('payment_types.id'), nullable=False)
   created_at = db.Column(db.DateTime, default=datetime.now)
   updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now) 
   deleted_at = db.Column(db.DateTime)
@@ -34,8 +36,8 @@ class Order(db.Model):
   __tablename__ = 'orders'
 
   id = db.Column(db.BigInteger, primary_key=True)
-  details = db.Column(db.BigInteger, db.ForeignKey('order_details.id'))
-  products = db.relationship('Product', secondary=OrderProducts, back_populates='orders')
+  details = db.relationship('OrderDetails', backref='orders', uselist=False)
+  products = db.relationship('OrderProducts', back_populates='order')
   created_at = db.Column(db.DateTime, default=datetime.now)
   updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now) 
   deleted_at = db.Column(db.DateTime)
