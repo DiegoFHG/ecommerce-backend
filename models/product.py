@@ -39,6 +39,7 @@ class Product(db.Model):
   orders = db.relationship('OrderProducts', back_populates='product')
   categories = db.relationship('ProductCategory', back_populates='product')
   inventory = db.relationship('ProductInventory', backref='products', uselist=False, cascade="all, delete")
+  carts = db.relationship('CartProduct', back_populates='product')
   created_at = db.Column(db.DateTime, default=datetime.now)
   updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now) 
   deleted_at = db.Column(db.DateTime)
