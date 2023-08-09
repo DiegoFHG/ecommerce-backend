@@ -1,5 +1,5 @@
 from marshmallow import Schema, fields
-from schemas import currency, tax, discount
+from schemas import currency, tax, discount, category
 
 class CreateProductSchema(Schema):
   name = fields.Str(required=True)
@@ -14,8 +14,22 @@ class CreateProductSchema(Schema):
 class ProductSchema(Schema):
   price = fields.Float()
   class Meta:
-    fields = ('id', 'name', 'desc', 'price', 'currency', 'tax', 'discount', 'created_at', 'updated_at', 'img')
+    fields = (
+      'id',
+      'name',
+      'desc',
+      'price',
+      'currency',
+      'tax',
+      'discount',
+      'created_at',
+      'updated_at',
+      'img',
+      'quantity',
+      'categories'
+    )
 
   currency = fields.Nested(currency.CurrencySchema)
   tax = fields.Nested(tax.TaxSchema)
   discount = fields.Nested(discount.DiscountSchema)
+  categories = fields.List(fields.Nested(category.CategorySchema))

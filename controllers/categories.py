@@ -16,6 +16,20 @@ def get(id):
 
   return jsonify(found_category)
 
+@categories.get('/<id>/subcategories')
+def get_category_subcategories(id):
+  subcategories = category_service.get_category_subcategories(id)
+  subcategories = category.CategorySchema(many=True).dump(subcategories)
+
+  return jsonify(subcategories)
+
+@categories.get('/<id>/tree')
+def get_category_tree(id):
+  tree = category_service.get_category_tree(id)
+  tree = category.CategorySchema(many=True).dump(tree)
+
+  return jsonify(tree)
+
 @categories.post('/')
 def create():
   errors = category.CreateCategorySchema().validate(request.json)

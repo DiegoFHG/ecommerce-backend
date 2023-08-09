@@ -1,6 +1,6 @@
+from sqlalchemy import text
 from config import db
 from models.category import Category
-from schemas.category import CreateCategorySchema
 
 class CategoryService():
   def get_all_categories(self):
@@ -8,6 +8,31 @@ class CategoryService():
 
   def get_category(self, id):
     return db.get_or_404(Category, id)
+
+  def get_category_subcategories(self, id):
+    category = db.get_or_404(Category, id)
+    subcategories = Category.query.filter_by(parent_id=category.id)
+
+    return subcategories   
+  
+  def get_category_tree(self, id):
+    category = db.get_or_404(Category, id)
+    tree = db.session.execute(
+      text("""WITH RECURSIVE tree AS (
+        SELECT 
+          id, name, parent_id, created_at, updated_at, deleted_at
+        FROM categories
+        WHERE id = :id
+        UNION
+          SELECT 
+            c.id, c.name, c.parent_id, c.created_at, c.updated_at, c.deleted_at
+          FROM categories c
+          INNER JOIN tree t ON t.parent_id = c.id
+      ) SELECT * FROM tree ORDER by tree.id ASC"""),
+      { 'id': category.id }
+    ).all()
+
+    return tree
 
   def create_category(self, category_info):
     category = None

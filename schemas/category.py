@@ -6,6 +6,4 @@ class CreateCategorySchema(Schema):
 
 class CategorySchema(Schema):
   class Meta:
-    fields = ('id', 'name', 'parent_id', 'created_at', 'updated_at')
-
-  parent = fields.Nested(lambda: CategorySchema(exclude=('parent',)))
+    fields = ('id', 'name', 'parent_id', 'created_at', 'updated_at', 'deleted_at')
