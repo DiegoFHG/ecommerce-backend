@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
-from schemas import product
-from services.products import ProductService
+from schemas.product import ProductSchema, CreateProductSchema
+from services.product import ProductService
 
 products = Blueprint('products', __name__, url_prefix='/products')
 
@@ -13,28 +13,29 @@ def index():
   limit = int(url_params.get('limit', 10))
 
   products, count = product_service.get_all_products(page, limit)
-  products = product.ProductSchema(many=True).dump(products)
+
+  products = ProductSchema(many=True).dump(products)
 
   return jsonify({ 'products': products, 'total': count })
 
 @products.get('/<id>')
 def get(id):
   found_product = product_service.get_product(id)
-  found_product = product.ProductSchema().dump(found_product)
+  found_product = ProductSchema().dump(found_product)
 
   return jsonify(found_product)
 
 @products.post('/')
 def create():
-  errors = product.CreateProductSchema().validate(request.json)
+  errors = CreateProductSchema().validate(request.json)
 
   if errors:
     return errors, 400
 
-  product_info = product.CreateProductSchema().dump(request.json)
+  product_info = CreateProductSchema().dump(request.json)
 
   new_product = product_service.create_product(product_info=product_info)
-  new_product = product.ProductSchema().dump(new_product)
+  new_product = ProductSchema().dump(new_product)
 
   return jsonify(new_product)
 

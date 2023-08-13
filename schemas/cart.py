@@ -1,5 +1,6 @@
 from marshmallow import Schema, fields
-from schemas import product
+from .product import ProductSchema
+
 
 class AddProductToTokenCartSchema(Schema):
   product = fields.Integer(required=True)
@@ -9,4 +10,4 @@ class CartSchema(Schema):
   class Meta:
     fields = ('token', 'products')
   
-  products = fields.List(fields.Nested(product.ProductSchema))
+  products = fields.List(fields.Nested(ProductSchema))

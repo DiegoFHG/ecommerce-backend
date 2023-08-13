@@ -1,6 +1,7 @@
+from sqlalchemy.orm import selectinload
 from config import db
 from models.product import Product, ProductInventory
-from schemas.product import CreateProductSchema
+from models.currency import Currency
 
 class ProductService():
   def get_all_products(self, page, limit):
@@ -9,15 +10,30 @@ class ProductService():
 
     if (page != 0):
       products = Product.query.paginate(page=page, per_page=limit)
+    else:
+      products = Product.query.all() 
 
-      return products, count
-
-    products = Product.query.all()
-    
     return products, count
 
   def get_product(self, id):
-    return db.get_or_404(Product, id)
+    product = db.get_or_404(Product, id)
+    product.quantity = product.inventory.quantity
+
+    return product
+
+  def get_by_category(self, category, page, limit):
+    products = None
+    count = Product.query.filter(Product.categories.any(id=category)).count()
+
+    if (page != 0):
+      products = Product.query.join(Currency).filter(Product.categories.any(id=category)).paginate(page=page, per_page=limit)
+    else:
+      products = Product.query.options(selectinload(Product.inventory).load_only(ProductInventory.quantity)).filter(Product.categories.any(id=category)).all()
+
+    for product in products:
+      product.quantity = product.inventory.quantity
+
+    return products, count
 
   def create_product(self, product_info):
     product = Product(

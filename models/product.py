@@ -9,7 +9,7 @@ class ProductCategory(db.Model):
   product_id = db.Column(db.BigInteger, db.ForeignKey('products.id'), primary_key=True)
   category_id = db.Column(db.BigInteger, db.ForeignKey('categories.id'), primary_key=True)
   product = db.relationship('Product', back_populates='categories_association')
-  category = db.relationship('Category', back_populates='products')
+  category = db.relationship('Category', back_populates='product_association')
   created_at = db.Column(db.DateTime, default=datetime.now)
   updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now) 
   deleted_at = db.Column(db.DateTime)

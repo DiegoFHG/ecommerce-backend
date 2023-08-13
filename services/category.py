@@ -3,8 +3,15 @@ from config import db
 from models.category import Category
 
 class CategoryService():
-  def get_all_categories(self):
-    pass
+  def get_all_categories(self, parents_only):
+    categories = None
+
+    if parents_only:
+      categories = Category.query.filter_by(parent_id=None).all()
+    else:
+      categories = Category.query.all()
+
+    return categories
 
   def get_category(self, id):
     return db.get_or_404(Category, id)
@@ -14,7 +21,7 @@ class CategoryService():
     subcategories = Category.query.filter_by(parent_id=category.id)
 
     return subcategories   
-  
+
   def get_category_tree(self, id):
     category = db.get_or_404(Category, id)
     tree = db.session.execute(
