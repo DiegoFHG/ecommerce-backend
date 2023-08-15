@@ -42,7 +42,7 @@ class ProductSchema(SQLAlchemySchema):
   id = auto_field()
   name = auto_field()
   desc = auto_field()
-  price = auto_field()
+  price = fields.Float()
   currency = Nested(CurrencySchema)
   tax = Nested(TaxSchema)
   discount = Nested(DiscountSchema)
