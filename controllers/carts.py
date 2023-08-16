@@ -47,3 +47,21 @@ def add_product_to_token_cart(token):
   added_product = cart.CartSchema().dump(added_product)
 
   return jsonify(added_product)
+
+@carts.post('/<token>/products/quantity')
+def change_product_quantity_token_cart(token):
+  errors = cart.AddProductToTokenCartSchema().validate(request.json)
+
+  if errors:
+    return errors, 400
+
+  cart_product = cart.AddProductToTokenCartSchema().dump(request.json)
+
+  new_cart = cart_service.change_product_quantity_from_token_cart(token, cart_product)
+
+  if new_cart is None:
+    return abort(404)
+  
+  new_cart = cart.CartSchema().dump(new_cart)
+
+  return jsonify(new_cart)

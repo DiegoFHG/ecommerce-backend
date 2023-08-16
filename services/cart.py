@@ -63,3 +63,32 @@ class CartService():
       setattr(product, 'quantity', cart.products_association[i].quantity)
 
     return cart
+
+  def change_product_quantity_from_token_cart(self, token, cart_product_info):
+    cart = Cart.query.filter_by(token=token).first()
+
+    if cart is None:
+      return None
+
+    cart_product = CartProduct.query.filter_by(cart_id=cart.id, product_id=cart_product_info['product']).first()
+
+    print(cart_product)
+
+    if cart_product is None:
+      return None
+
+    if cart_product_info['quantity'] == 0:
+      db.session.delete(cart_product)
+      db.session.commit()
+      db.session.refresh(cart)
+
+    else:
+      cart_product.quantity = cart_product_info['quantity']
+
+      db.session.commit()
+      db.session.refresh(cart)
+
+    for i, product in enumerate(cart.products):
+      setattr(product, 'quantity', cart.products_association[i].quantity)
+
+    return cart
