@@ -5,8 +5,9 @@ from config import db
 class CartProduct(db.Model):
   __tablename__ = 'cart_products'
 
-  cart_id = db.Column(db.BigInteger, db.ForeignKey('shopping_carts.id'), primary_key=True)
-  product_id = db.Column(db.BigInteger, db.ForeignKey('products.id'), primary_key=True)
+  id = db.Column(db.BigInteger, primary_key=True)
+  cart_id = db.Column(db.BigInteger, db.ForeignKey('shopping_carts.id'))
+  product_id = db.Column(db.BigInteger, db.ForeignKey('products.id'))
   quantity = db.Column(db.Integer)
   cart = db.relationship('Cart', back_populates='products_association')
   product = db.relationship('Product', back_populates='carts')
@@ -20,7 +21,7 @@ class Cart(db.Model):
   id = db.Column(db.BigInteger, primary_key=True)
   # user = db.Column(db.BigInteger, db.ForeignKey('users.id'), nullable=True)
   token = db.Column(db.String, unique=True, nullable=True)
-  products_association = db.relationship('CartProduct', back_populates='cart')
+  products_association = db.relationship('CartProduct', back_populates='cart', cascade='all, delete-orphan')
   products = association_proxy('products_association', 'product')
   created_at = db.Column(db.DateTime, default=datetime.now)
   updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now) 
