@@ -12,3 +12,36 @@ services:
       - POSTGRES_DB=ecommerce
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
+    networks:
+      - ecommerce-net
+  
+  ecommerce-nginx:
+    image: nginx:1.25.2
+    container_name: ecommerce-nginx
+    ports:
+      - 8080:80
+    environment:
+      - NGINX_PORT=80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - ecommerce-net
+    
+  ecommerce-redis:
+    image: redis:7.2.0-alpine3.18
+    container_name: ecommerce-redis
+    ports:
+      - 6379:6379
+  
+  ecommerce:
+    build:
+      context: .
+    container_name: ecommerce-api
+    volumes:
+      - .:/usr/src/app
+    networks:
+      - ecommerce-net
+    command: 'gunicorn --bind=0.0.0.0:8000 --forwarded-allow-ips="ecommerce-nginx" --workers=4 --worker-class=gevent --worker-connections=100 app:app'
+    
+networks:
+  ecommerce-net:
