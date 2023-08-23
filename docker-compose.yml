@@ -41,7 +41,7 @@ services:
       - .:/usr/src/app
     networks:
       - ecommerce-net
-    command: 'gunicorn --bind=0.0.0.0:8000 --forwarded-allow-ips="ecommerce-nginx" --workers=4 --worker-class=gevent --worker-connections=100 app:app'
+    command: 'gunicorn --reload --bind=0.0.0.0:8000 --forwarded-allow-ips="ecommerce-nginx" --workers=4 --worker-class=gevent --worker-connections=100 app:app'
     
 networks:
   ecommerce-net:
