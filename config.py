@@ -10,7 +10,7 @@ psycogreen.gevent.patch_psycopg()
 
 app = Flask('ecommerce')
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://ecommerce:ecommerce@ecommerce-db:5432/ecommerce"
+app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://ecommerce:ecommerce@ecommerce-db:5432/ecommerce'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
