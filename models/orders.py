@@ -40,6 +40,7 @@ class Order(db.Model):
   __tablename__ = 'orders'
 
   id = db.Column(db.BigInteger, primary_key=True)
+  token = db.Column(db.String, unique=True, nullable=True)
   details = db.relationship('OrderDetails', backref='orders', uselist=False)
   products = db.relationship('OrderProducts', back_populates='order')
   created_at = db.Column(db.DateTime, default=datetime.now)
