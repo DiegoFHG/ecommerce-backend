@@ -7,6 +7,6 @@ class AddProductToTokenCartSchema(Schema):
 
 class CartSchema(Schema):
   class Meta:
-    fields = ('token', 'products')
+    fields = ('token', 'products', 'id')
   
   products = fields.List(fields.Nested(ProductSchema))
