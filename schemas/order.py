@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields, validate
-from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
-from models.orders import OrderDetails
+from .product import ProductSchema
+from .currency import CurrencySchema
 
 class CreateOrderSchema(Schema):
   cart = fields.Integer(required=True)
@@ -16,33 +16,28 @@ class CreateOrderSchema(Schema):
   shipping_type = fields.Integer(required=True)
   payment_type = fields.Integer(required=True)
 
-class OrderSchema(SQLAlchemySchema):
-  class Meta:
-    model = OrderDetails
-    include_relationships = True
-    fields = (
-      'order',
-      'line',
-      'city',
-      'country',
-      'division',
-      'postal_code',
-      'recipient_name',
-      'recipient_email',
-      'recipient_phone_number',
-      'total',
-      'created_at'
-    )
+class OrderStatus(Schema):
+  id = fields.Integer()
+  name = fields.Str()
 
-  order = auto_field(data_key='id')
-  line = auto_field()
-  city = auto_field()
-  country = auto_field()
-  division = auto_field()
-  postal_code = auto_field()
-  recipient_name = auto_field()
-  recipient_email = auto_field()
-  recipient_phone_number = auto_field()
+class OrderDetails(Schema):
+  id = fields.Integer()
+  line = fields.Str()
+  line2 = fields.Str()
+  city = fields.Str()
+  country = fields.Str()
+  division = fields.Str()
+  postal_code = fields.Str()
+  recipient_name = fields.Str()
+  recipient_email = fields.Str()
+  recipient_phone_number = fields.Str()
   total = fields.Float()
-  created_at = auto_field()
-  # products = auto_field()
+  currency = fields.Nested(CurrencySchema)
+
+class OrderSchema(Schema):
+  id = fields.Integer()
+  token = fields.Str()
+  created_at = fields.Str()
+  details = fields.Nested(OrderDetails)
+  products = fields.List(fields.Nested(ProductSchema))
+  status = fields.Nested(OrderStatus)

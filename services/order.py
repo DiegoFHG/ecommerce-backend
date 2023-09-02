@@ -1,3 +1,5 @@
+from random import choices
+from string import ascii_letters, digits
 from config import db
 from models.orders import Order, OrderDetails, OrderProducts
 from models.cart import Cart 
@@ -7,16 +9,30 @@ class OrderService():
     pass
 
   def get_order(self, id):
-    pass
+    order = db.get_or_404(Order, id)
+    order_details = OrderDetails.query.filter_by(order=order.id).first()
+
+    setattr(order, 'details', order_details)
+
+    for i, product in enumerate(order.products):
+      setattr(product, 'quantity', order.products_association[i].quantity)
+
+    return order
 
   def create_order(self, order_info):
     cart = db.get_or_404(Cart, order_info['cart'])
-    order = Order()
+
+    token = ''.join(choices(ascii_letters + digits, k=20))
+
+    while Order.query.filter_by(token=token).first() is not None:
+      token = ''.join(choices(ascii_letters + digits, k=20))
+    
+    order = Order(token=token) 
 
     db.session.add(order)
     db.session.commit()
 
-    order_total = sum(p.price for p in cart.products)
+    order_total = sum(p.price * p.quantity for p in cart.products)
 
     order_details = OrderDetails(
       order = order.id,
