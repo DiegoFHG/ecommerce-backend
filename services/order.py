@@ -27,12 +27,12 @@ class OrderService():
     while Order.query.filter_by(token=token).first() is not None:
       token = ''.join(choices(ascii_letters + digits, k=20))
     
-    order = Order(token=token) 
+    order = Order(token=token, status_id=1) 
 
     db.session.add(order)
     db.session.commit()
 
-    order_total = sum(p.price * p.quantity for p in cart.products)
+    order_total = sum(p.product.price * p.quantity for p in cart.products_association)
 
     order_details = OrderDetails(
       order = order.id,

@@ -35,7 +35,7 @@ class OrderDetails(Schema):
   currency = fields.Nested(CurrencySchema)
 
 class OrderSchema(Schema):
-  id = fields.Integer()
+  id = fields.Integer(attribute='order')
   token = fields.Str()
   created_at = fields.Str()
   details = fields.Nested(OrderDetails)
