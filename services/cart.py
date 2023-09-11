@@ -2,6 +2,7 @@ from random import choices
 from string import ascii_letters, digits
 from config import db
 from models.cart import Cart, CartProduct
+from models.product import Product
 
 class CartService():
   def get_token_cart(self, token):
@@ -45,14 +46,20 @@ class CartService():
 
   def add_product_to_token_cart(self, token, cart_product_info):
     cart = Cart.query.filter_by(token=token).first()
+    product = Product.query.filter_by(id=cart_product_info['product']).first()
 
-    if cart is None:
+    if cart is None or product is None:
       return None
+
+    found_cart_product = CartProduct.query.filter_by(cart_id=cart.id, product_id=cart_product_info['product']).first()
+
+    if found_cart_product:
+      return False
 
     cart_product = CartProduct(
       cart_id = cart.id,
       product_id = cart_product_info['product'],
-      quantity = cart_product_info['quantity']
+      quantity = product.inventory.quantity if cart_product_info['quantity'] > product.inventory.quantity else cart_product_info['quantity']
     )
 
     db.session.add(cart_product)

@@ -44,6 +44,10 @@ def add_product_to_token_cart(token):
   cart_product = cart.AddProductToTokenCartSchema().dump(request.json)
 
   added_product = cart_service.add_product_to_token_cart(token, cart_product)
+
+  if added_product is False:
+    return abort(400, 'product already in cart')
+
   added_product = cart.CartSchema().dump(added_product)
 
   return jsonify(added_product)
